@@ -1,0 +1,31 @@
+wavelen=0.03;       %lanmuda
+tp=1e-6;            %pulse wid
+PRI=20e-6;
+N=256;              %repeat number
+%%generate pulse
+n=40;               % sample n points per 1us 
+fs=n/(1e-6);        %sample rate
+k=0;
+rect=[];
+a=[ones(1,n) zeros(1,round(((PRI/tp)-1)*n))];
+for i=0:N-1
+    r=a;
+    rect=[rect r];
+end
+t=(0:(n*(PRI/tp))*N-1)/fs;
+%%chirp
+B=30e6;
+f0=10e6;
+T=1e-6;
+K=B/T;
+phase=2*pi*f0.*t(1:round(n*(PRI/tp)))+K*pi*t(1:round(n*(PRI/tp))).^2;
+s=exp(j*phase);
+S=[];
+for i=0:N-1
+    sa=s;
+    S=[S sa];
+end
+X=rect.*S;
+plot(t(1:400),rect(1:400));
+hold on;
+plot(t(1:400),real(X(1:400)));
